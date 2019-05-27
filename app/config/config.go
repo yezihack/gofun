@@ -23,6 +23,6 @@ var DiningRoot = map[int]string{
 
 //模板
 var Template = map[string]string{
-	"office_on":  "老铁上班啦,距离9:30,现在:%s",
-	"office_off": "老铁下班啦,下班18:30,现在:%s",
+	"office_on":  "老铁上班打卡啦,距离9:30,现在:%s",
+	"office_off": "老铁下班打卡啦,下班18:30,现在:%s",
 }
