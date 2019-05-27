@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	k3log.NewDevelopment("钉钉消息", "logs")
+	k3log.NewDevelopment("钉钉消息", "./logs/gofun.log")
 	k3log.Info("go fun运行中...")
 	c := cron.New()
 
