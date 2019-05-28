@@ -20,3 +20,5 @@ clean:
 vendor:
 	govendor add +e
 	govendor remove +u
+copy:
+	cp run/config.toml.simple run/config.toml
