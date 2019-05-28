@@ -14,52 +14,11 @@ import (
 )
 
 func main() {
-	k3log.NewDevelopment("钉钉消息", "./logs/gofun.log")
-	k3log.Info("go fun运行中...")
-	c := cron.New()
+	k3log.NewDevelopment(server.Config.Title, tools.GetCurrentDirectory()+"/gofun.log")
+	k3log.Info(server.Config.Title + "运行中...")
 
-	//随机吃饭
-	c.AddFunc("0 30 12 * * 1-5", func() {
-		meal := server.Meal.Random()
-		err := tools.DingDingCurlPost(config.DingDingUrl["meal"], tools.SetDingDingData(meal, true))
-		if err != nil {
-			k3log.Error(err)
-		}
-	})
-	//一周回顾
-	c.AddFunc("0 0 12 * * 5", func() {
-		historyWeek := server.Meal.History() //历史回顾
-		tools.DingDingCurlPost(config.DingDingUrl["meal"], tools.SetDingDingData(historyWeek, true))
-	})
-	//下班
-	c.AddFunc("0 30 18 * * *", func() {
-		office := server.Office{}
-		tools.DingDingCurlPost(config.DingDingUrl["office"], tools.SetDingDingData(office.Off(), true))
-	})
-	c.AddFunc("0 45 18 * * *", func() {
-		office := server.Office{}
-		tools.DingDingCurlPost(config.DingDingUrl["office"], tools.SetDingDingData(office.Off(), true))
-	})
-	c.AddFunc("0 0 19 * * *", func() {
-		office := server.Office{}
-		tools.DingDingCurlPost(config.DingDingUrl["office"], tools.SetDingDingData(office.Off(), true))
-	})
-	//上班
-	c.AddFunc("0 0 9 * * *", func() {
-		office := server.Office{}
-		tools.DingDingCurlPost(config.DingDingUrl["office"], tools.SetDingDingData(office.On(), true))
-	})
-	c.AddFunc("0 15 9 * * *", func() {
-		office := server.Office{}
-		tools.DingDingCurlPost(config.DingDingUrl["office"], tools.SetDingDingData(office.On(), true))
-	})
-	c.AddFunc("0 25 9 * * *", func() {
-		office := server.Office{}
-		tools.DingDingCurlPost(config.DingDingUrl["office"], tools.SetDingDingData(office.On(), true))
-	})
-
-	c.Start()
-
+	c := cron.NewWithLocation(config.BeijingLocation)
+	server.Start(c)
 	ctx := context.Background()
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGKILL, syscall.SIGTERM, syscall.SIGSTOP, syscall.SIGABRT, syscall.SIGINT)

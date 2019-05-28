@@ -14,8 +14,9 @@ type MealInfo struct {
 }
 
 type MealStructure struct {
-	HaveMeal  []MealInfo //已使用
-	DoingMeal []int      //未使用
+	HaveMeal  []MealInfo     //已使用
+	DoingMeal []int          //未使用
+	Menu      map[int]string //菜单
 }
 
 var Meal MealStructure
@@ -26,10 +27,13 @@ func init() {
 
 //初使化
 func (ms *MealStructure) Init() {
+	Meal.HaveMeal = make([]MealInfo, 0)
 	Meal.DoingMeal = make([]int, 0)
-	Meal.DoingMeal = make([]int, 0)
-	for id := range config.DiningRoot {
+	Meal.Menu = make(map[int]string)
+	for id, val := range Config.Meal.List {
+		id++
 		Meal.DoingMeal = append(Meal.DoingMeal, id)
+		Meal.Menu[id] = val
 	}
 }
 
@@ -68,20 +72,20 @@ func (ms *MealStructure) Random() string {
 	//随机一个数
 	index := r.Intn(ms.Len())
 	//获取对应的值
-	value := ms.DoingMeal[index]
+	mealKey := ms.DoingMeal[index]
 	//将随机的值从切片里删除
 	ms.DoingMeal = append(ms.DoingMeal[:index], ms.DoingMeal[index+1:]...)
 	//获取名称
-	food := config.DiningRoot[value]
+	food := Meal.Menu[mealKey]
 	//特殊备选
-	if value == 7 {
+	if mealKey == 7 {
 		r = rand.New(rand.NewSource(time.Now().UnixNano()))
-		food += ", 备选:" + config.DiningRoot[ms.DoingMeal[r.Intn(ms.Len())]]
+		food += ", 备选:" + Meal.Menu[ms.DoingMeal[r.Intn(ms.Len())]]
 	}
 	//随机过的存储起来
 	ms.HaveMeal = append(ms.HaveMeal, MealInfo{
 		Food: food,
 		Week: ms.Week(),
 	})
-	return food
+	return "今天随机:" + food
 }

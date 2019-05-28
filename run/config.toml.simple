@@ -1,0 +1,15 @@
+title = "gofun的配置文件"
+
+[access_token]
+meal = ""
+office = ""
+
+#餐厅列表
+[dining_room]
+list = [
+    "",
+]
+#上班
+[office]
+on = "09:30" # 上班时间
+off = "18:30" # 下班时间

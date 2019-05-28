@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
+all: dev run
+
 dev:clean fmt build
+
 
 run:clean build
 	./run/gofun
@@ -12,7 +15,7 @@ build:
 	go build -v -o ./run/gofun ./app
 
 clean:
-	rm -rf run/*
+	rm -rf run/gofun
 
 vendor:
 	govendor add +e
