@@ -9,7 +9,6 @@ import (
 )
 
 type MealInfo struct {
-	Week string //星期几
 	Food string //食物
 }
 
@@ -51,10 +50,25 @@ func (ms *MealStructure) Reset() {
 func (ms *MealStructure) History() string {
 	his := bytes.Buffer{}
 	his.WriteString("本周:\n")
-	for _, item := range ms.HaveMeal {
-		his.WriteString(fmt.Sprintf("%s 吃了<%s>\n", item.Week, item.Food))
+	for i, item := range ms.HaveMeal {
+		his.WriteString(fmt.Sprintf("星期%s 吃了<%s>\n", ms.WeekChina(i+1), item.Food))
 	}
 	return his.String()
+}
+
+func (ms *MealStructure) WeekChina(i int) string {
+	switch i {
+	case 1:
+		return "一"
+	case 2:
+		return "二"
+	case 3:
+		return "三"
+	case 4:
+		return "四"
+	default:
+		return "五"
+	}
 }
 
 //打印星期
@@ -85,7 +99,21 @@ func (ms *MealStructure) Random() string {
 	//随机过的存储起来
 	ms.HaveMeal = append(ms.HaveMeal, MealInfo{
 		Food: food,
-		Week: ms.Week(),
 	})
 	return "今天随机:" + food
+}
+
+//修复数据
+func (ms *MealStructure) Fix(req ...int) {
+	for _, idx := range req {
+		ms.HaveMeal = append(ms.HaveMeal, MealInfo{
+			Food: ms.Menu[idx],
+		})
+		for k, v := range ms.DoingMeal {
+			if v == idx {
+				ms.DoingMeal = append(ms.DoingMeal[:k], ms.DoingMeal[k+1:]...)
+			}
+		}
+	}
+	fmt.Println(ms.DoingMeal)
 }

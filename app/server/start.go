@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"github.com/ThreeKing2018/k3log"
 	"github.com/robfig/cron"
 	"github.com/yezihack/gofun/app/tools"
@@ -9,6 +10,10 @@ import (
 func Start(c *cron.Cron) {
 	ding := new(tools.DingDing)
 	office := Office{}
+
+	Meal.Fix(Config.Fix...)
+	fmt.Println(Meal.History())
+
 	//随机吃饭
 	c.AddFunc("0 30 11 * * 1-5", func() {
 		meal := Meal.Random()

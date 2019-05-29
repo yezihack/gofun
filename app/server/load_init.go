@@ -8,6 +8,8 @@ import (
 	"github.com/yezihack/gofun/app/tools"
 	"io/ioutil"
 	"os"
+	"strconv"
+	"strings"
 )
 
 //定义配置结构体
@@ -21,6 +23,7 @@ type Conf struct {
 		On  string `toml:"on"`
 		Off string `toml:"off"`
 	} `toml:"office"`
+	Fix []int
 }
 
 //token结构体
@@ -36,9 +39,13 @@ var ConfigFile = "/gofun.toml"
 func init() {
 	path := tools.GetCurrentDirectory()
 	file := path + ConfigFile
-	var op string
+	var (
+		op, fix string
+	)
 	flag.StringVar(&op, "c", "", "初使项目")
+	flag.StringVar(&fix, "fix", "", "修复数据")
 	flag.Parse()
+
 	if op != "" {
 		ConfigFile = "/" + op
 		file = path + ConfigFile
@@ -47,7 +54,15 @@ func init() {
 		}
 		os.Exit(0)
 	}
-
+	if !strings.EqualFold(fix, "") {
+		fixInt := make([]int, 0)
+		for _, val := range strings.Split(fix, ",") {
+			v, _ := strconv.Atoi(val)
+			fixInt = append(fixInt, v)
+		}
+		Config.Fix = fixInt
+	}
+	//解析toml
 	if _, err := toml.DecodeFile(file, &Config); err != nil {
 		k3log.Error("initConf", err)
 		os.Exit(400)
@@ -60,6 +75,7 @@ func init() {
 		k3log.Warn("配置文件为空,请填写有效信息")
 		os.Exit(0)
 	}
+
 }
 
 func WriteConfig() {
