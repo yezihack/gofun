@@ -18,7 +18,8 @@ clean:
 	rm -rf run/gofun
 
 vendor:
-	govendor add +e
 	govendor remove +u
+	govendor add +e
+
 copy:
 	cp run/config.toml.simple run/config.toml
