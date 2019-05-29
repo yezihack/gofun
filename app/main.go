@@ -14,9 +14,9 @@ import (
 )
 
 func main() {
+
 	k3log.NewDevelopment(server.Config.Title, tools.GetCurrentDirectory()+"/gofun.log")
 	k3log.Info(server.Config.Title + "运行中...")
-
 	c := cron.NewWithLocation(config.BeijingLocation)
 	server.Start(c)
 	ctx := context.Background()

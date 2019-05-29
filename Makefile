@@ -3,11 +3,13 @@
 all: dev run
 
 dev:clean fmt build
-
+	./run/gofun -c gofun.toml
 
 run:clean build
 	./run/gofun
 
+deam:
+	nohup ./run/gofun > /dev/null 2>&1 &
 fmt:
 	gofmt -l -w ./
 
