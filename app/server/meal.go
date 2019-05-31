@@ -3,9 +3,10 @@ package server
 import (
 	"bytes"
 	"fmt"
-	"github.com/yezihack/gofun/app/config"
 	"math/rand"
 	"time"
+
+	"github.com/yezihack/gofun/app/config"
 )
 
 type MealInfo struct {
@@ -39,6 +40,11 @@ func (ms *MealStructure) Init() {
 //长度
 func (ms *MealStructure) Len() int {
 	return len(Meal.DoingMeal)
+}
+
+//历史长度
+func (ms *MealStructure) HistoryLen() int {
+	return len(ms.HaveMeal)
 }
 
 //重置
@@ -80,7 +86,7 @@ func (ms *MealStructure) Week() string {
 func (ms *MealStructure) Random() string {
 	//随机种子
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	if ms.Len() == 0 {
+	if ms.HistoryLen() == 5 { //满五则重置
 		ms.Reset()
 	}
 	//随机一个数
@@ -91,11 +97,6 @@ func (ms *MealStructure) Random() string {
 	ms.DoingMeal = append(ms.DoingMeal[:index], ms.DoingMeal[index+1:]...)
 	//获取名称
 	food := Meal.Menu[mealKey]
-	//特殊备选
-	if mealKey == 7 {
-		r = rand.New(rand.NewSource(time.Now().UnixNano()))
-		food += ", 备选:" + Meal.Menu[ms.DoingMeal[r.Intn(ms.Len())]]
-	}
 	//随机过的存储起来
 	ms.HaveMeal = append(ms.HaveMeal, MealInfo{
 		Food: food,

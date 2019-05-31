@@ -3,13 +3,14 @@ package server
 import (
 	"bytes"
 	"flag"
-	"github.com/BurntSushi/toml"
-	"github.com/ThreeKing2018/k3log"
-	"github.com/yezihack/gofun/app/tools"
 	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/BurntSushi/toml"
+	"github.com/ThreeKing2018/k3log"
+	"github.com/yezihack/gofun/app/tools"
 )
 
 //定义配置结构体
@@ -34,11 +35,13 @@ type TokenConf struct {
 
 var Config Conf
 var ConfigFile = "/gofun.toml"
+var ConfigFileAll string
 
 //初使配置文件
 func init() {
 	path := tools.GetCurrentDirectory()
 	file := path + ConfigFile
+	ConfigFileAll = file
 	var (
 		op, fix string
 	)

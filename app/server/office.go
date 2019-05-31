@@ -2,10 +2,11 @@ package server
 
 import (
 	"fmt"
-	"github.com/yezihack/gofun/app/config"
-	"github.com/yezihack/gofun/app/tools"
 	"math"
 	"strconv"
+
+	"github.com/yezihack/gofun/app/config"
+	"github.com/yezihack/gofun/app/tools"
 )
 
 type Office struct {

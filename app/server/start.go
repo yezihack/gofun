@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+
 	"github.com/ThreeKing2018/k3log"
 	"github.com/robfig/cron"
 	"github.com/yezihack/gofun/app/tools"
@@ -33,7 +34,7 @@ func Start(c *cron.Cron) {
 		}
 	})
 	//下班
-	c.AddFunc("0 30 18 * * *", func() {
+	c.AddFunc("0 30 18 * * 1-5", func() {
 		data := office.Off()
 		k3log.Info("下班", data)
 		err := ding.Send(Config.Token.Office, ding.SetText(data, true))
@@ -41,7 +42,7 @@ func Start(c *cron.Cron) {
 			k3log.Error(err)
 		}
 	})
-	c.AddFunc("0 45 18 * * *", func() {
+	c.AddFunc("0 45 18 * * 1-5", func() {
 		data := office.Off()
 		k3log.Info("下班", data)
 		err := ding.Send(Config.Token.Office, ding.SetText(data, true))
@@ -49,7 +50,7 @@ func Start(c *cron.Cron) {
 			k3log.Error(err)
 		}
 	})
-	c.AddFunc("0 0 19 * * *", func() {
+	c.AddFunc("0 0 19 * * 1-5", func() {
 		data := office.Off()
 		k3log.Info("下班", data)
 		err := ding.Send(Config.Token.Office, ding.SetText(data, true))
@@ -58,7 +59,7 @@ func Start(c *cron.Cron) {
 		}
 	})
 	//上班
-	c.AddFunc("0 0 9 * * *", func() {
+	c.AddFunc("0 0 9 * * 1-5", func() {
 		data := office.On()
 		k3log.Info("上班", data)
 		err := ding.Send(Config.Token.Office, ding.SetText(data, true))
@@ -66,7 +67,7 @@ func Start(c *cron.Cron) {
 			k3log.Error(err)
 		}
 	})
-	c.AddFunc("0 15 9 * * *", func() {
+	c.AddFunc("0 15 9 * * 1-5", func() {
 		data := office.On()
 		k3log.Info("上班", data)
 		err := ding.Send(Config.Token.Office, ding.SetText(data, true))
@@ -74,7 +75,7 @@ func Start(c *cron.Cron) {
 			k3log.Error(err)
 		}
 	})
-	c.AddFunc("0 25 9 * * *", func() {
+	c.AddFunc("0 25 9 * * 1-5", func() {
 		data := office.On()
 		k3log.Info("上班", data)
 		err := ding.Send(Config.Token.Office, ding.SetText(data, true))
