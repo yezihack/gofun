@@ -33,6 +33,12 @@
 			"revisionTime": "2018-08-30T19:11:22Z"
 		},
 		{
+			"checksumSHA1": "7NP1qUMF8Kx1y0zANxx0e+oq9Oo=",
+			"path": "github.com/fsnotify/fsnotify",
+			"revision": "ccc981bf80385c528a65fbfdd49bf2d8da22aa23",
+			"revisionTime": "2018-08-30T22:02:26Z"
+		},
+		{
 			"checksumSHA1": "srVltClYLpJmCjnwaXmcFgiGuHQ=",
 			"path": "github.com/mikemintang/go-curl",
 			"revision": "fabfc3d8173c4d2628e0463cd511b1d6f775c35a",
@@ -105,6 +111,11 @@
 			"path": "go.uber.org/zap/zapcore",
 			"revision": "be8fbe69c8308d60c6929b8fdb99378430f01bd2",
 			"revisionTime": "2019-03-08T06:54:08Z"
+		},
+		{
+			"checksumSHA1": "gq+MtaxaV8I0Nl19Vdvy4yhRJOE=",
+			"path": "golang.org/x/sys/unix",
+			"revision": ""
 		},
 		{
 			"checksumSHA1": "TM3Neoy1xRAKyZYMGzKc41sDFW4=",
