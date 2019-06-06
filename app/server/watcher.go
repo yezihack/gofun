@@ -14,18 +14,18 @@ func Watcher(stop chan struct{}) (err error) {
 	}
 	//defer watch.Close()
 	//监控文件
-	err = watch.Add(ConfigFileAll)
+	err = watch.Add(Serve.ConfigPath)
 	if err != nil {
 		k3log.Error(err)
 	}
-	k3log.Info("对文件进行监控...", ConfigFileAll)
+	k3log.Info("对文件进行监控...", Serve.ConfigPath)
 
 	//开个goroutine进行关闭监控句柄
-	//go func() {
-	//	<-stop
-	//	fmt.Println("close")
-	//	watch.Close()
-	//}()
+	go func() {
+		<-stop
+		fmt.Println("close")
+		watch.Close()
+	}()
 
 	go func() {
 		for {
@@ -45,7 +45,6 @@ func Watcher(stop chan struct{}) (err error) {
 						event.Op&fsnotify.Create == fsnotify.Create {
 						confFileName := event.Name
 						fmt.Println(confFileName)
-						Meal.DynamicFix(confFileName)
 					}
 				}
 			case err := <-watch.Errors:

@@ -11,23 +11,22 @@ import (
 	"github.com/yezihack/gofun/app/config"
 	"github.com/yezihack/gofun/app/server"
 	"github.com/yezihack/gofun/app/tools"
-	"syscall"
 )
 
 func main() {
 	//设置日志
-	k3log.NewDevelopment(server.Config.Title, tools.GetCurrentDirectory()+"/gofun.log")
-	k3log.Info(server.Config.Title + "运行中...")
+	k3log.NewDevelopment(server.Serve.Config.Title, tools.GetCurrentDirectory()+"/gofun.log")
+	k3log.Info(server.Serve.Config.Title + "运行中...")
 	c := cron.NewWithLocation(config.BeijingLocation)
 
 	stopChan := make(chan struct{})
 	//调用主程序
-	server.Start(c)
+	server.Start(c, stopChan)
 	server.Watcher(stopChan)
 
 	ctx := context.Background()
 	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, os.Kill, os.Interrupt, syscall.SIGKILL, syscall.SIGTERM, syscall.SIGSTOP, syscall.SIGABRT, syscall.SIGINT)
+	signal.Notify(sigChan, os.Kill, os.Interrupt)
 	<-sigChan
 
 	stopChan <- struct{}{}

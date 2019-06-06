@@ -47,7 +47,7 @@ var Serve Servers
 func init() {
 	Serve.ConfigName = config.ConfName
 	Serve.execPath = tools.GetCurrentDirectory() + "/"
-	Serve.ConfigPath = Serve.execPath + "/ " + Serve.ConfigName
+	Serve.ConfigPath = Serve.execPath + Serve.ConfigName
 	//parse params
 	Serve.flagParse()
 	//load config file

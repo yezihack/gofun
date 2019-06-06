@@ -14,8 +14,8 @@ type Office struct {
 
 //上班
 func (Office) On() string {
-	s := fmt.Sprintf(config.Template["office_on"], Config.Office.On, tools.GetNow().Format("15:04:05"))
-	diff := tools.SubMinute(Config.Office.On)
+	s := fmt.Sprintf(config.Template["office_on"], Serve.Config.Office.On, tools.GetNow().Format("15:04:05"))
+	diff := tools.SubMinute(Serve.Config.Office.On)
 	if diff > 0 {
 		return s + ", 还有" + strconv.Itoa(diff) + "分钟"
 	} else {
@@ -26,8 +26,8 @@ func (Office) On() string {
 
 //下班
 func (Office) Off() string {
-	s := fmt.Sprintf(config.Template["office_off"], Config.Office.Off, tools.GetNow().Format("15:04:05"))
-	diff := tools.SubMinute(Config.Office.Off)
+	s := fmt.Sprintf(config.Template["office_off"], Serve.Config.Office.Off, tools.GetNow().Format("15:04:05"))
+	diff := tools.SubMinute(Serve.Config.Office.Off)
 	if diff > 0 {
 		return s + ", 还有" + strconv.Itoa(diff) + "分钟"
 	} else {
