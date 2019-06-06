@@ -10,22 +10,22 @@ import (
 )
 
 type MealInfo struct {
-	Index int //菜单下标
-	Food string //食物
-	Week string //何星期
+	Index int    //菜单下标
+	Food  string //食物
+	Week  string //何星期
 }
 
 type MealStructure struct {
-	HaveMeal  []MealInfo     //已使用
-	Doing []int
-	Menu      map[int]string //菜单
-	Config    Conf
+	HaveMeal []MealInfo //已使用
+	Doing    []int
+	Menu     map[int]string //菜单
+	Config   Conf
 }
 
 var Meal MealStructure
 
 func init() {
-	Meal.Config  = Serve.Config
+	Meal.Config = Serve.Config
 	Meal.Init()
 }
 
@@ -42,6 +42,7 @@ func (ms *MealStructure) Init() {
 func (ms *MealStructure) Len() int {
 	return len(ms.Menu)
 }
+
 //历史长度
 func (ms *MealStructure) HistoryLen() int {
 	return len(ms.HaveMeal)
@@ -85,6 +86,7 @@ func (ms *MealStructure) WeekChina(i int) string {
 func (ms *MealStructure) Week() string {
 	return time.Now().In(config.BeijingLocation).Weekday().String()
 }
+
 //判断是否存在
 func (ms *MealStructure) InArray(id int) bool {
 	for _, item := range ms.HaveMeal {
@@ -97,7 +99,7 @@ func (ms *MealStructure) InArray(id int) bool {
 
 //随机一个值
 func (ms *MealStructure) Random() string {
-	RandomContinue:
+RandomContinue:
 	//随机种子
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	if ms.HistoryLen() == 5 { //满五则重置
@@ -113,9 +115,9 @@ func (ms *MealStructure) Random() string {
 	food := ms.Menu[index]
 	//随机过的存储起来
 	ms.HaveMeal = append(ms.HaveMeal, MealInfo{
-		Index:index,
-		Food: food,
-		Week:ms.Week(),
+		Index: index,
+		Food:  food,
+		Week:  ms.Week(),
 	})
 	return food
 }
@@ -124,8 +126,8 @@ func (ms *MealStructure) Random() string {
 func (ms *MealStructure) Fix(req ...int) {
 	for _, idx := range req {
 		ms.HaveMeal = append(ms.HaveMeal, MealInfo{
-			Index:idx,
-			Food: ms.Menu[idx],
+			Index: idx,
+			Food:  ms.Menu[idx],
 		})
 	}
 	fmt.Println(ms.HaveMeal)

@@ -18,7 +18,7 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 
 	i := 0
 	for i > 10 {
-		i ++
+		i++
 		food := Meal.Random()
 		fmt.Println(food)
 	}
