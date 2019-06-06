@@ -16,12 +16,6 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 	Meal.Fix(Config.Fix...)
 	fmt.Println(Meal.History())
 
-	data := ding.C.SuanGua()
-	s := fmt.Sprintf("今天是%s\n老黄历: 农历:%s 节气:%s \n宜: %s\n忌: %s\n ----今天星期%s是一年中的第%s天",
-		data.TypeName, data.NongLiCn, data.JieQi, data.Suit, data.Avoid, data.WeekCn, data.DayNum)
-	fmt.Println(s)
-
-	return
 	//随机吃饭
 	err = c.AddFunc("0 30 11 * * *", func() {
 		if !ding.C.CheckIsWeek() {
@@ -116,8 +110,9 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 	})
 	err = c.AddFunc("0 0 8 * * *", func() {
 		data := ding.C.SuanGua()
-		s := fmt.Sprintf("老黄历: \n 宜: %s \n  忌:%s", data.Suit, data.Avoid)
-		err := ding.Send(Config.Token.Meal, ding.SetText(s, true))
+		s := fmt.Sprintf("今天是%s\n老黄历:\n 农历:%s 节气:%s \n宜: %s\n忌: %s\n----今天星期%s是一年中的第%s天",
+			data.TypeName, data.NongLiCn, data.JieQi, data.Suit, data.Avoid, data.WeekCn, data.DayNum)
+		err := ding.Send(Config.Token.Meal, ding.SetText(s, false))
 		if err != nil {
 			k3log.Error(err)
 		}
