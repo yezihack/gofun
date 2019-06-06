@@ -17,7 +17,8 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 	fmt.Println(Meal.History())
 
 	data := ding.C.SuanGua()
-	s := fmt.Sprintf("老黄历: \n 宜: %s \n  忌:%s", data.Suit, data.Avoid)
+	s := fmt.Sprintf("今天是%s\n老黄历: 农历:%s 节气:%s \n宜: %s\n忌: %s\n ----今天星期%s是一年中的第%s天",
+		data.TypeName, data.NongLiCn, data.JieQi, data.Suit, data.Avoid, data.WeekCn, data.DayNum)
 	fmt.Println(s)
 
 	return
