@@ -16,16 +16,16 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 	Meal.Fix(Config.Fix...)
 	fmt.Println(Meal.History())
 
-	i := 0
-	for i < 10 {
-		i ++
-		food := Meal.Random()
-		fmt.Println(food)
-	}
+	data := ding.C.SuanGua()
+	s := fmt.Sprintf("老黄历: \n 宜: %s \n  忌:%s", data.Suit, data.Avoid)
+	fmt.Println(s)
 
 	return
 	//随机吃饭
-	err = c.AddFunc("0 30 11 * * 1-5", func() {
+	err = c.AddFunc("0 30 11 * * *", func() {
+		if !ding.C.CheckIsWeek() {
+			return
+		}
 		meal := Meal.Random()
 		k3log.Info("随机吃饭", meal)
 		err := ding.Send(Config.Token.Meal, ding.SetText(meal, true))
@@ -34,7 +34,10 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 		}
 	})
 	//一周回顾
-	err = c.AddFunc("0 0 12 * * 5", func() {
+	err = c.AddFunc("0 0 12 * * *", func() {
+		if !ding.C.CheckIsWeek() {
+			return
+		}
 		historyWeek := Meal.History() //历史回顾
 		k3log.Info("一周回顾", historyWeek)
 		err := ding.Send(Config.Token.Meal, ding.SetText(historyWeek, true))
@@ -43,7 +46,10 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 		}
 	})
 	//下班
-	err = c.AddFunc("0 30 18 * * 1-5", func() {
+	err = c.AddFunc("0 30 18 * * *", func() {
+		if !ding.C.CheckIsWeek() {
+			return
+		}
 		data := office.Off()
 		k3log.Info("下班", data)
 		err := ding.Send(Config.Token.Office, ding.SetText(data, true))
@@ -51,7 +57,10 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 			k3log.Error(err)
 		}
 	})
-	err = c.AddFunc("0 45 18 * * 1-5", func() {
+	err = c.AddFunc("0 45 18 * * *", func() {
+		if !ding.C.CheckIsWeek() {
+			return
+		}
 		data := office.Off()
 		k3log.Info("下班", data)
 		err := ding.Send(Config.Token.Office, ding.SetText(data, true))
@@ -59,7 +68,10 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 			k3log.Error(err)
 		}
 	})
-	err = c.AddFunc("0 0 19 * * 1-5", func() {
+	err = c.AddFunc("0 0 19 * * *", func() {
+		if !ding.C.CheckIsWeek() {
+			return
+		}
 		data := office.Off()
 		k3log.Info("下班", data)
 		err := ding.Send(Config.Token.Office, ding.SetText(data, true))
@@ -68,7 +80,10 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 		}
 	})
 	//上班
-	err = c.AddFunc("0 0 9 * * 1-5", func() {
+	err = c.AddFunc("0 0 9 * * *", func() {
+		if !ding.C.CheckIsWeek() {
+			return
+		}
 		data := office.On()
 		k3log.Info("上班", data)
 		err := ding.Send(Config.Token.Office, ding.SetText(data, true))
@@ -76,7 +91,10 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 			k3log.Error(err)
 		}
 	})
-	err = c.AddFunc("0 15 9 * * 1-5", func() {
+	err = c.AddFunc("0 15 9 * * *", func() {
+		if !ding.C.CheckIsWeek() {
+			return
+		}
 		data := office.On()
 		k3log.Info("上班", data)
 		err := ding.Send(Config.Token.Office, ding.SetText(data, true))
@@ -84,10 +102,21 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 			k3log.Error(err)
 		}
 	})
-	err = c.AddFunc("0 25 9 * * 1-5", func() {
+	err = c.AddFunc("0 25 9 * * *", func() {
+		if !ding.C.CheckIsWeek() {
+			return
+		}
 		data := office.On()
 		k3log.Info("上班", data)
 		err := ding.Send(Config.Token.Office, ding.SetText(data, true))
+		if err != nil {
+			k3log.Error(err)
+		}
+	})
+	err = c.AddFunc("0 0 8 * * *", func() {
+		data := ding.C.SuanGua()
+		s := fmt.Sprintf("老黄历: \n 宜: %s \n  忌:%s", data.Suit, data.Avoid)
+		err := ding.Send(Config.Token.Meal, ding.SetText(s, true))
 		if err != nil {
 			k3log.Error(err)
 		}

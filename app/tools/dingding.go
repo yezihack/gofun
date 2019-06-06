@@ -15,6 +15,7 @@ import (
 )
 
 type DingDing struct {
+	C Common
 }
 
 //发送消息

@@ -16,3 +16,4 @@ var Template = map[string]string{
 
 //配置名称
 const ConfName = "gofun.toml"
+
