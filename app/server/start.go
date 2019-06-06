@@ -17,7 +17,7 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 	fmt.Println(Meal.History())
 
 	i := 0
-	for i > 10 {
+	for i < 10 {
 		i ++
 		food := Meal.Random()
 		fmt.Println(food)
