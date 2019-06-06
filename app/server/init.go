@@ -11,6 +11,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/ThreeKing2018/k3log"
 	"github.com/yezihack/gofun/app/tools"
+	"github.com/yezihack/gofun/app/config"
 )
 
 //定义配置结构体
@@ -32,56 +33,72 @@ type TokenConf struct {
 	Meal   string `toml:"meal"`
 	Office string `toml:"office"`
 }
+//服务配置结构体
+type Servers struct {
+	Config Conf //配置信息
+	ConfigName string //配置文件名称
+	ConfigPath string //配置文件全路径 ,带文件名
+	execPath string //exec执行目录
+}
 
-var Config Conf
-var ConfigFile = "/gofun.toml"
-var ConfigFileAll string
+var Serve Servers
 
 //初使配置文件
 func init() {
-	path := tools.GetCurrentDirectory()
-	file := path + ConfigFile
-	ConfigFileAll = file
+	Serve.ConfigName = config.ConfName
+	Serve.execPath = tools.GetCurrentDirectory() + "/"
+	Serve.ConfigPath = Serve.execPath + "/ " + Serve.ConfigName
+	//parse params
+	Serve.flagParse()
+	//load config file
+	Serve.LoadConfig()
+}
+//加载配置文件
+func (s *Servers) LoadConfig() {
+	//解析toml
+	if _, err := toml.DecodeFile(Serve.ConfigPath, &Serve.Config); err != nil {
+		k3log.Error("initConf", err)
+		os.Exit(400)
+	}
+	if Serve.Config.Token.Office == "" ||
+		Serve.Config.Token.Meal == "" ||
+		len(Serve.Config.Meal.List) == 0 ||
+		Serve.Config.Office.Off == "" ||
+		Serve.Config.Office.On == "" {
+		k3log.Warn("配置文件为空,请填写有效信息")
+		os.Exit(0)
+	}
+}
+//处理运行的参数数据
+func (s *Servers) flagParse() {
 	var (
-		op, fix string
+		configName, fix string
 	)
-	flag.StringVar(&op, "c", "", "初使项目")
+	flag.StringVar(&configName, "c", "", "初使项目")
 	flag.StringVar(&fix, "fix", "", "修复数据")
 	flag.Parse()
 
-	if op != "" {
-		ConfigFile = "/" + op
-		file = path + ConfigFile
+	//自定义配置名称
+	if configName != "" {
+		Serve.ConfigName = configName
+		file := Serve.execPath +  Serve.ConfigName
 		if !tools.CheckFileExists(file) {
-			WriteConfig()
+			s.WriteConfig()
 		}
 		os.Exit(0)
 	}
+	//处理传过来的数据
 	if !strings.EqualFold(fix, "") {
 		fixInt := make([]int, 0)
 		for _, val := range strings.Split(fix, ",") {
 			v, _ := strconv.Atoi(val)
 			fixInt = append(fixInt, v)
 		}
-		Config.Fix = fixInt
+		Serve.Config.Fix = fixInt
 	}
-	//解析toml
-	if _, err := toml.DecodeFile(file, &Config); err != nil {
-		k3log.Error("initConf", err)
-		os.Exit(400)
-	}
-	if Config.Token.Office == "" ||
-		Config.Token.Meal == "" ||
-		len(Config.Meal.List) == 0 ||
-		Config.Office.Off == "" ||
-		Config.Office.On == "" {
-		k3log.Warn("配置文件为空,请填写有效信息")
-		os.Exit(0)
-	}
-
 }
-
-func WriteConfig() {
+//配置模板输出
+func (*Servers) WriteConfig() {
 	var data bytes.Buffer
 	data.WriteString("title = \"gofun的娱乐版\"")
 	data.WriteString("\n")
@@ -110,7 +127,7 @@ func WriteConfig() {
 	data.WriteString("\n")
 	data.WriteString("off = \"18:30\" # 下班时间")
 	path := tools.GetCurrentDirectory()
-	err := ioutil.WriteFile(path+ConfigFile, data.Bytes(), 0666)
+	err := ioutil.WriteFile(path+ Serve.ConfigName, data.Bytes(), 0666)
 	if err != nil {
 		k3log.Error(err)
 		os.Exit(0)

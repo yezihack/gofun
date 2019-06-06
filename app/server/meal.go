@@ -6,42 +6,55 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/yezihack/gofun/app/config"
 )
 
 type MealInfo struct {
+	Index int //菜单下标
 	Food string //食物
+	Week string //何星期
 }
 
 type MealStructure struct {
 	HaveMeal  []MealInfo     //已使用
-	DoingMeal []int          //未使用
+	Doing []int
 	Menu      map[int]string //菜单
+	Config    Conf
 }
 
 var Meal MealStructure
 
 func init() {
+	Meal.Config  = Serve.Config
 	Meal.Init()
 }
 
 //初使化
 func (ms *MealStructure) Init() {
 	Meal.HaveMeal = make([]MealInfo, 0)
-	Meal.DoingMeal = make([]int, 0)
 	Meal.Menu = make(map[int]string)
-	for id, val := range Config.Meal.List {
+	//加载菜单
+	for id, val := range Meal.Config.Meal.List {
 		id++
-		Meal.DoingMeal = append(Meal.DoingMeal, id)
 		Meal.Menu[id] = val
 	}
 }
 
-//长度
-func (ms *MealStructure) Len() int {
-	return len(Meal.DoingMeal)
+//动态计算正在执行的
+func (ms *MealStructure) CalcDoing() {
+	for idx := range Meal.Menu {
+		for _, item := range Meal.HaveMeal {
+			if item.Index != idx {
+				Meal.Doing = append(Meal.Doing, idx)
+			}
+		}
+	}
 }
 
+func (ms *MealStructure) Len() int {
+	return len(Meal.Doing)
+}
 //历史长度
 func (ms *MealStructure) HistoryLen() int {
 	return len(ms.HaveMeal)
@@ -72,8 +85,12 @@ func (ms *MealStructure) WeekChina(i int) string {
 		return "三"
 	case 4:
 		return "四"
-	default:
+	case 5:
 		return "五"
+	case 6:
+		return "六"
+	default:
+		return "日"
 	}
 }
 
@@ -89,6 +106,7 @@ func (ms *MealStructure) Random() string {
 	if ms.HistoryLen() == 5 { //满五则重置
 		ms.Reset()
 	}
+	ms.CalcDoing()
 	//随机一个数
 	index := r.Intn(ms.Len())
 	//获取对应的值
@@ -117,4 +135,19 @@ func (ms *MealStructure) Fix(req ...int) {
 		}
 	}
 	fmt.Println(ms.DoingMeal)
+}
+
+//动态加载数据
+func (ms *MealStructure) DynamicFix(filePath string) {
+	LoadConfig(filePath)
+	for id, val := range Config.Meal.List {
+		id++
+		for _, food := range Meal.HaveMeal {
+			if food.Food != val {
+				Meal.DoingMeal = append(Meal.DoingMeal, id)
+				Meal.Menu[len(Meal.Menu)-1] = val
+			}
+		}
+	}
+	spew.Dump(Meal)
 }

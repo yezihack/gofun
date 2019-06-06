@@ -11,6 +11,7 @@ import (
 func Start(c *cron.Cron) {
 	ding := new(tools.DingDing)
 	office := Office{}
+	Config := Serve.Config
 
 	Meal.Fix(Config.Fix...)
 	fmt.Println(Meal.History())
