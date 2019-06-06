@@ -10,8 +10,8 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/ThreeKing2018/k3log"
-	"github.com/yezihack/gofun/app/tools"
 	"github.com/yezihack/gofun/app/config"
+	"github.com/yezihack/gofun/app/tools"
 )
 
 //定义配置结构体
@@ -33,12 +33,13 @@ type TokenConf struct {
 	Meal   string `toml:"meal"`
 	Office string `toml:"office"`
 }
+
 //服务配置结构体
 type Servers struct {
-	Config Conf //配置信息
+	Config     Conf   //配置信息
 	ConfigName string //配置文件名称
 	ConfigPath string //配置文件全路径 ,带文件名
-	execPath string //exec执行目录
+	execPath   string //exec执行目录
 }
 
 var Serve Servers
@@ -53,6 +54,7 @@ func init() {
 	//load config file
 	Serve.LoadConfig()
 }
+
 //加载配置文件
 func (s *Servers) LoadConfig() {
 	//解析toml
@@ -69,6 +71,7 @@ func (s *Servers) LoadConfig() {
 		os.Exit(0)
 	}
 }
+
 //处理运行的参数数据
 func (s *Servers) flagParse() {
 	var (
@@ -81,7 +84,7 @@ func (s *Servers) flagParse() {
 	//自定义配置名称
 	if configName != "" {
 		Serve.ConfigName = configName
-		file := Serve.execPath +  Serve.ConfigName
+		file := Serve.execPath + Serve.ConfigName
 		if !tools.CheckFileExists(file) {
 			s.WriteConfig()
 		}
@@ -97,6 +100,7 @@ func (s *Servers) flagParse() {
 		Serve.Config.Fix = fixInt
 	}
 }
+
 //配置模板输出
 func (*Servers) WriteConfig() {
 	var data bytes.Buffer
@@ -127,7 +131,7 @@ func (*Servers) WriteConfig() {
 	data.WriteString("\n")
 	data.WriteString("off = \"18:30\" # 下班时间")
 	path := tools.GetCurrentDirectory()
-	err := ioutil.WriteFile(path+ Serve.ConfigName, data.Bytes(), 0666)
+	err := ioutil.WriteFile(path+Serve.ConfigName, data.Bytes(), 0666)
 	if err != nil {
 		k3log.Error(err)
 		os.Exit(0)
