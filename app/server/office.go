@@ -33,8 +33,8 @@ func (Office) Off() string {
 	} else {
 		f, _ := strconv.ParseFloat(strconv.Itoa(diff), 10)
 		s += ", 已过" + fmt.Sprint(math.Abs(f)) + "分钟, 别忘记打卡啦"
-		if math.Abs(f) > 30 && math.Abs(f) < 60 {
-			s += ",老兄还不下班,下班都半小时啦"
+		if math.Abs(f) > 10 && math.Abs(f) < 60 {
+			s += ",工作诚可贵,身体价更高,下班回家陪家人"
 		} else if math.Abs(f) > 60 {
 			s += ",老铁还在加班呢.辛苦啦"
 		}

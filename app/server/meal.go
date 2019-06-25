@@ -3,10 +3,11 @@ package server
 import (
 	"bytes"
 	"fmt"
-	"math/rand"
 	"time"
 
 	"github.com/yezihack/gofun/app/config"
+	"github.com/yezihack/gofun/app/tools"
+	"math/rand"
 )
 
 type MealInfo struct {
@@ -20,6 +21,8 @@ type MealStructure struct {
 	Doing    []int
 	Menu     map[int]string //菜单
 	Config   Conf
+	Common   tools.Common
+	Cache    *tools.Cache
 }
 
 var Meal MealStructure
@@ -27,6 +30,7 @@ var Meal MealStructure
 func init() {
 	Meal.Config = Serve.Config
 	Meal.Init()
+	Meal.Cache = tools.New(23 * time.Hour)
 }
 
 //初使化
@@ -37,6 +41,16 @@ func (ms *MealStructure) Init() {
 	for id, val := range ms.Config.Meal.List {
 		ms.Menu[id] = val
 	}
+}
+func (ms *MealStructure) ReInit() {
+	Meal.Config = Serve.Config
+	ms.Menu = make(map[int]string)
+	//加载菜单
+	for id, val := range ms.Config.Meal.List {
+		ms.Menu[id] = val
+	}
+	fmt.Println(ms.Menu)
+	fmt.Println(ms.HaveMeal)
 }
 
 func (ms *MealStructure) Len() int {
@@ -97,12 +111,31 @@ func (ms *MealStructure) InArray(id int) bool {
 	return false
 }
 
+//获取结果
+func (ms *MealStructure) Result() string {
+	//获取对应的值
+	index := ms.Random(true)
+	food := ms.Menu[index]
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	num := r.Intn(21) //每月开发一家
+	if num == 1 {
+		food = "开发下一家"
+	}
+	//随机过的存储起来
+	ms.HaveMeal = append(ms.HaveMeal, MealInfo{
+		Index: index,
+		Food:  food,
+		Week:  ms.Week(),
+	})
+	return fmt.Sprintf("今日午餐: %s, <备选:%s>", food, ms.Menu[ms.Random(false)])
+}
+
 //随机一个值
-func (ms *MealStructure) Random() string {
+func (ms *MealStructure) Random(isReset bool) int {
 RandomContinue:
 	//随机种子
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	if ms.HistoryLen() == 5 { //满五则重置
+	if ms.HistoryLen() == 5 && isReset { //满五则重置
 		ms.Reset()
 	}
 	//随机一个数
@@ -111,15 +144,7 @@ RandomContinue:
 	if b := ms.InArray(index); b {
 		goto RandomContinue
 	}
-	//获取对应的值
-	food := ms.Menu[index]
-	//随机过的存储起来
-	ms.HaveMeal = append(ms.HaveMeal, MealInfo{
-		Index: index,
-		Food:  food,
-		Week:  ms.Week(),
-	})
-	return food
+	return index
 }
 
 //修复数据
@@ -131,4 +156,19 @@ func (ms *MealStructure) Fix(req ...int) {
 		})
 	}
 	fmt.Println(ms.HaveMeal)
+}
+
+//判断是否是工作日
+func (ms *MealStructure) IsWeek() bool {
+	val, err := ms.Cache.Get(config.WEEK_KEY)
+	if err != nil || val == nil {
+		week := ms.Common.CheckIsWeek()
+		ms.Cache.PutDefault(config.WEEK_KEY, week)
+		return week
+	}
+	switch val.(type) {
+	case bool:
+		return val.(bool)
+	}
+	return ms.Common.CheckIsWeek()
 }

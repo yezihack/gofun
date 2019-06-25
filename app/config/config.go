@@ -17,3 +17,9 @@ var Template = map[string]string{
 //配置名称
 const ConfName = "gofun.toml"
 
+//key
+const (
+	WEEK_KEY = "week_key"
+)
+
+const Port = 10000

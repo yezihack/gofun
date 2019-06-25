@@ -1,8 +1,7 @@
 title = "gofun的娱乐版"
 
 [access_token]
-meal = ""
-office = ""
+token = ""
 
 #餐厅列表
 [dining_room]

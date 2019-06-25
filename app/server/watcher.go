@@ -20,19 +20,11 @@ func Watcher(stop chan struct{}) (err error) {
 	}
 	k3log.Info("对文件进行监控...", Serve.ConfigPath)
 
-	//开个goroutine进行关闭监控句柄
-	go func() {
-		<-stop
-		fmt.Println("close")
-		watch.Close()
-	}()
-
 	go func() {
 		for {
 			select {
 			case event := <-watch.Events:
 				{
-					k3log.Info(event.Op)
 					//判断事件发生的类型，如下5种
 					// Create 创建
 					// Write 写入
@@ -43,15 +35,27 @@ func Watcher(stop chan struct{}) (err error) {
 						event.Op&fsnotify.Rename == fsnotify.Rename ||
 						event.Op&fsnotify.Write == fsnotify.Write ||
 						event.Op&fsnotify.Create == fsnotify.Create {
-						confFileName := event.Name
-						fmt.Println(confFileName)
+						watch.Remove(event.Name)
+						watch.Add(event.Name)
+						fmt.Println(event.Name, event.Op.String())
+						if !Serve.LoadConfig() {
+							k3log.Warn("加载配置文件异常")
+							return
+						}
+						Meal.ReInit()
 					}
 				}
 			case err := <-watch.Errors:
 				k3log.Error("watch", err)
+				return
 			}
-
 		}
+	}()
+	//开个goroutine进行关闭监控句柄
+	go func() {
+		<-stop
+		watch.Close()
+		fmt.Println("Watcher Close")
 	}()
 	return
 }

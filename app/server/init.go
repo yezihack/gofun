@@ -30,8 +30,7 @@ type Conf struct {
 
 //token结构体
 type TokenConf struct {
-	Meal   string `toml:"meal"`
-	Office string `toml:"office"`
+	Token string `toml:"token"`
 }
 
 //服务配置结构体
@@ -56,20 +55,20 @@ func init() {
 }
 
 //加载配置文件
-func (s *Servers) LoadConfig() {
+func (s *Servers) LoadConfig() bool {
 	//解析toml
 	if _, err := toml.DecodeFile(Serve.ConfigPath, &Serve.Config); err != nil {
 		k3log.Error("initConf", err)
-		os.Exit(400)
+		return false
 	}
-	if Serve.Config.Token.Office == "" ||
-		Serve.Config.Token.Meal == "" ||
+	if Serve.Config.Token.Token == "" ||
 		len(Serve.Config.Meal.List) == 0 ||
 		Serve.Config.Office.Off == "" ||
 		Serve.Config.Office.On == "" {
 		k3log.Warn("配置文件为空,请填写有效信息")
-		os.Exit(0)
+		return false
 	}
+	return true
 }
 
 //处理运行的参数数据
@@ -109,9 +108,7 @@ func (*Servers) WriteConfig() {
 	data.WriteString("\n")
 	data.WriteString("[access_token]")
 	data.WriteString("\n")
-	data.WriteString("meal = \"\"")
-	data.WriteString("\n")
-	data.WriteString("office = \"\"")
+	data.WriteString("token = \"\"")
 	data.WriteString("\n")
 	data.WriteString("\n")
 	data.WriteString("#餐厅列表")
@@ -133,7 +130,7 @@ func (*Servers) WriteConfig() {
 	path := tools.GetCurrentDirectory()
 	err := ioutil.WriteFile(path+Serve.ConfigName, data.Bytes(), 0666)
 	if err != nil {
-		k3log.Error(err)
+		k3log.Error("WriteConfig", err)
 		os.Exit(0)
 	}
 }

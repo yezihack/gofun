@@ -35,7 +35,6 @@ func (c *Common) CheckIsWeek() bool {
 		k3log.Error("CheckIsWeek", err)
 		return false
 	}
-	fmt.Println(m)
 	if fmt.Sprint(m[Ymd]) == "0" {
 		return true
 	}
