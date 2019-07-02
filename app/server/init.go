@@ -52,6 +52,7 @@ func init() {
 	Serve.flagParse()
 	//load config file
 	Serve.LoadConfig()
+
 }
 
 //加载配置文件

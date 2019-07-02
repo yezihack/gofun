@@ -9,7 +9,7 @@ run:clean build
 	./run/gofun
 
 deam:
-	nohup ./run/gofun > ./gofun.log 2>&1 &
+	nohup ./run/gofun > ./log/gofun.log 2>&1 &
 
 kill:
 	pid=$(shell ps -ef |grep -v grep |grep gofun |awk {'print $2'})

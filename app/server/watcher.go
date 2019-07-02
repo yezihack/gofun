@@ -31,23 +31,24 @@ func Watcher(stop chan struct{}) (err error) {
 					// Remove 删除
 					// Rename 重命名
 					// Chmod 修改权限
-					if event.Op&fsnotify.Remove == fsnotify.Remove ||
-						event.Op&fsnotify.Rename == fsnotify.Rename ||
-						event.Op&fsnotify.Write == fsnotify.Write ||
-						event.Op&fsnotify.Create == fsnotify.Create {
-						watch.Remove(event.Name)
-						watch.Add(event.Name)
-						fmt.Println(event.Name, event.Op.String())
-						if !Serve.LoadConfig() {
-							k3log.Warn("加载配置文件异常")
-							return
-						}
-						Meal.ReInit()
-					}
+					watch.Remove(event.Name)
+					watch.Add(Serve.ConfigPath)
+					fmt.Printf("name:%s, op:%s\n", event.Name, event.Op.String())
+
+					//if event.Op&fsnotify.Remove == fsnotify.Remove ||
+					//	event.Op&fsnotify.Rename == fsnotify.Rename ||
+					//	event.Op&fsnotify.Write == fsnotify.Write ||
+					//	event.Op&fsnotify.Create == fsnotify.Create {
+					//
+					//	//if !Serve.LoadConfig() {
+					//	//	k3log.Warn("加载配置文件异常")
+					//	//} else {
+					//	//	Meal.ReInit()
+					//	//}
+					//}
 				}
 			case err := <-watch.Errors:
 				k3log.Error("watch", err)
-				return
 			}
 		}
 	}()

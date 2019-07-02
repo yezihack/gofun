@@ -17,10 +17,9 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 	fmt.Println(Meal.History())
 
 	//i := 0
-	//for i < 21 {
+	//for i < 5 {
 	//	i++
-	//	Meal.Result()
-	//	fmt.Println(meal)
+	//	fmt.Println(Meal.Result())
 	//}
 	//fmt.Println(Meal.IsWeek())
 	////os.Exit(0)
