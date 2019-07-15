@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/ThreeKing2018/goCache"
+	"github.com/ThreeKing2018/k3log"
 	"github.com/yezihack/gofun/app/config"
 	"github.com/yezihack/gofun/app/tools"
 	"math/rand"
@@ -22,7 +24,7 @@ type MealStructure struct {
 	Menu     map[int]string //菜单
 	Config   Conf
 	Common   tools.Common
-	Cache    *tools.Cache
+	Cache    goCache.GoCacher
 }
 
 var Meal MealStructure
@@ -30,7 +32,7 @@ var Meal MealStructure
 func init() {
 	Meal.Config = Serve.Config
 	Meal.Init()
-	Meal.Cache = tools.New(23 * time.Hour)
+	Meal.Cache = goCache.New(time.Hour * time.Duration(1))
 }
 
 //初使化
@@ -163,12 +165,10 @@ func (ms *MealStructure) IsWeek() bool {
 	val, err := ms.Cache.Get(config.WEEK_KEY)
 	if err != nil || val == nil {
 		week := ms.Common.CheckIsWeek()
-		ms.Cache.PutDefault(config.WEEK_KEY, week)
+		k3log.Warn("isWeek", "from url")
+		ms.Cache.Set(config.WEEK_KEY, week, time.Hour*3)
 		return week
 	}
-	switch val.(type) {
-	case bool:
-		return val.(bool)
-	}
-	return ms.Common.CheckIsWeek()
+	k3log.Info("isWeek", "from cache")
+	return val.(bool)
 }

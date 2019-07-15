@@ -22,6 +22,11 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 	//	fmt.Println(Meal.Result())
 	//}
 	//fmt.Println(Meal.IsWeek())
+	//fmt.Println(Meal.IsWeek())
+	//fmt.Println(Meal.IsWeek())
+	//
+	//fmt.Println(Meal.IsWeek())
+	//fmt.Println(Meal.IsWeek())
 	////os.Exit(0)
 	//return
 

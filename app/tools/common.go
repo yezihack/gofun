@@ -7,14 +7,18 @@ import (
 	"github.com/yezihack/gofun/app/config"
 	"io/ioutil"
 	"net/http"
+	"sync"
 	"time"
 )
 
 type Common struct {
+	lock sync.Mutex
 }
 
 //判断是否是工作日
 func (c *Common) CheckIsWeek() bool {
+	c.lock.Lock()
+	defer c.lock.Unlock()
 	url := "http://tool.bitefu.net/jiari/?d=%s&back=json"
 	Ymd := time.Now().Format("2006-01-02")
 	url = fmt.Sprintf(url, Ymd)
@@ -35,14 +39,16 @@ func (c *Common) CheckIsWeek() bool {
 		k3log.Error("CheckIsWeek", err)
 		return false
 	}
-	if fmt.Sprint(m[Ymd]) == "0" {
+	if fmt.Sprint(m[Ymd]) == "0" { //是工作日
 		return true
 	}
-	return false
+	return false //非工作日
 }
 
 //
 func (c *Common) SuanGua() (result *config.SuanGuaStruct) {
+	c.lock.Lock()
+	defer c.lock.Unlock()
 	url := "http://tool.bitefu.net/jiari/?d=%s&back=json&info=1"
 	Ymd := time.Now().Format("2006-01-02")
 	url = fmt.Sprintf(url, Ymd)
