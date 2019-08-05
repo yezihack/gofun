@@ -100,6 +100,9 @@ func Start(c *cron.Cron, stopChan chan struct{}) (err error) {
 			k3log.Error(err)
 		}
 	})
+	err = c.AddFunc("01 0 0 * * *", func() {
+		Meal.ResetCache()
+	})
 	//开启
 	c.Start()
 	//关闭

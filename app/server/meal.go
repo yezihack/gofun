@@ -155,9 +155,16 @@ func (ms *MealStructure) IsWeek() bool {
 	if err != nil || val == nil {
 		week := ms.Common.CheckIsWeek()
 		k3log.Warn("isWeek", "from url")
-		ms.Cache.Set(config.WEEK_KEY, week, time.Hour*3)
+		ms.Cache.SetDefault(config.WEEK_KEY, week)
 		return week
 	}
 	k3log.Info("isWeek", "from cache")
 	return val.(bool)
+}
+//重置缓存
+func (ms *MealStructure) ResetCache() {
+	week := ms.Common.CheckIsWeek()
+	k3log.Warn("isWeek", "from url")
+	ms.Cache.SetDefault(config.WEEK_KEY, week)
+	k3log.Info("已更新缓存,参考值:", week)
 }
