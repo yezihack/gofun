@@ -32,7 +32,7 @@ var Meal MealStructure
 func init() {
 	Meal.Config = Serve.Config
 	Meal.Init()
-	Meal.Cache = goCache.New(time.Hour * time.Duration(1))
+	Meal.Cache = goCache.New(time.Hour * time.Duration(23))
 }
 
 //初使化
@@ -147,17 +147,6 @@ RandomContinue:
 		goto RandomContinue
 	}
 	return index
-}
-
-//修复数据
-func (ms *MealStructure) Fix(req ...int) {
-	for _, idx := range req {
-		ms.HaveMeal = append(ms.HaveMeal, MealInfo{
-			Index: idx,
-			Food:  ms.Menu[idx],
-		})
-	}
-	fmt.Println(ms.HaveMeal)
 }
 
 //判断是否是工作日
