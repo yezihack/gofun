@@ -22,4 +22,4 @@ const (
 	WEEK_KEY = "week_key"
 )
 
-const Port = 10000
+const Port = 4000
